@@ -1,0 +1,10 @@
+{
+  "name": "@afterwards/engine",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "index.ts",
+  "dependencies": {
+    "pdf-lib": "^1.17.1"
+  }
+}
