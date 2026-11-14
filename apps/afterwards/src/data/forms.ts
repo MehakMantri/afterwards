@@ -53,7 +53,7 @@ const annexIA: FormDef = {
     ...accounts(1, [704, 685, 666, 646], 627),
     ...cells([379, 360, 340, 321].flatMap((y, i) => [
       t(1, 100, y, `{claimants.${i}.name}`, 76, 8),
-      t(1, 182, y, `{claimants.${i}.address}`, 80, 8),
+      t(1, 178, y, `{claimants.${i}.address}`, 72, 8),
       t(1, 266, y, `{claimants.${i}.mobile}`, 72, 8),
       t(1, 342, y, `{claimants.${i}.email}`, 66, 8),
       t(1, 412, y, `{claimants.${i}.payBank} {claimants.${i}.payAccount} {claimants.${i}.payIfsc}`, 118, 8),
@@ -91,7 +91,7 @@ const annexIB: FormDef = {
     t(0, 134, 236, '{deceased.religion}', 110),
     t(0, 328, 213, '{deceased.law}', 54),
     ...cells([114, 99, 84, 70].flatMap((y, i) => [
-      t(0, 93, y, `{allHeirs.${i}.name}, {allHeirs.${i}.address}`, 102, 7.5),
+      t(0, 94, y, `{allHeirs.${i}.name}, {allHeirs.${i}.address}`, 94, 7.5),
       t(0, 202, y, `{allHeirs.${i}.age}`, 28, 8),
       t(0, 238, y, `{allHeirs.${i}.relation}`, 56, 8),
       t(0, 298, y, `{allHeirs.${i}.mobile} {allHeirs.${i}.email}`, 100, 7.5),
@@ -103,7 +103,7 @@ const annexIB: FormDef = {
     tick(2, 69, 273, 'flags.declaration'),
     ...cells([155, 139, 123, 107].flatMap((y, i) => [
       t(2, 100, y, `{claimants.${i}.name}`, 150, 8.5),
-      t(2, 262, y, `{claimants.${i}.payBank} {claimants.${i}.payAccount}`, 112, 8),
+      t(2, 267, y, `{claimants.${i}.payBank} {claimants.${i}.payAccount}`, 96, 8),
       t(2, 378, y, `{claimants.${i}.payIfsc}`, 58, 8),
       t(2, 440, y, `{claimants.${i}.payBranch}`, 90, 8),
     ])),
