@@ -19,7 +19,10 @@ function App() {
   const [view, setView] = useStored<View>('afterwards.view.v1', 'home')
   const at = STEPS.findIndex((s) => s.id === view)
 
-  useEffect(() => window.scrollTo(0, 0), [view])
+  // Braces matter: newer browsers return a Promise from scrollTo, and React would treat it as a cleanup function.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [view])
 
   const erase = () => {
     if (window.confirm('Erase everything you have typed from this device? This cannot be undone.')) {
