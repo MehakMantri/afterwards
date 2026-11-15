@@ -1,15 +1,18 @@
 # Product
 
-Afterwards helps a family in India claim a dead relative's money from banks and
-other institutions without paying an agent.
+Two apps on one engine, both for India, both free:
 
-Flow: plain questions -> claim list per institution -> details entered once ->
-filled official forms as PDFs -> tracker until each claim is paid.
+- Afterwards helps a family claim a dead relative's money from banks without paying an agent.
+- Turning 18 helps a young adult move mutual funds and bank accounts opened for them as a child
+  into their own name.
+
+Flow in both: plain questions -> what each institution requires -> details entered once ->
+filled official forms as PDFs, with letters and a checklist -> tracker until it is done.
 
 ## Rules that never bend
 
 - The rulebook decides. Code and copy never choose a form or a threshold by themselves.
-- Every rule carries: institution, form, threshold, form version date, official source URL.
+- Every rule carries its official source: title, paragraph, URL, date issued, date last checked.
 - No AI at runtime. Plain-language explanations are stored with each rule.
 - Nothing leaves the browser: no server, no login, no analytics on user input.
 - Out-of-scope cases (disputes, amounts over the threshold, missing legal heir

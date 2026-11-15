@@ -9,6 +9,7 @@
 
 ## Commands
 
-- `npm run dev` starts app 1
-- `npm run build` type-checks and builds app 1
+- `npm run dev` starts Afterwards; `npm run dev:18` starts Turning 18
+- `npm run build` type-checks and builds both apps
+- `npm run samples` fills every form with example data into `samples/`
 - `npm test` runs all tests

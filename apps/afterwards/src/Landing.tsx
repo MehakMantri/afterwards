@@ -1,8 +1,8 @@
 import { TIMELINE } from './data/rulebook'
 
-const RBI_URL = 'https://www.rbi.org.in/Scripts/NotificationUser.aspx?Id=12901&Mode=0'
+type Props = { onStart: () => void; onExample: () => void; onRulebook: () => void }
 
-export function Landing({ onStart, onExample }: { onStart: () => void; onExample: () => void }) {
+export function Landing({ onStart, onExample, onRulebook }: Props) {
   return (
     <>
       <section className="wrap hero">
@@ -28,7 +28,7 @@ export function Landing({ onStart, onExample }: { onStart: () => void; onExample
 
         <div className="sheets" aria-hidden="true">
           <div className="sheet">
-            <small>Annex I-C</small>
+            <small>Annex VII</small>
             <b>Bond of Indemnity</b>
             <div className="row">In consideration of <i /></div>
             <div className="row">the sum of Rupees <i /></div>
@@ -36,7 +36,7 @@ export function Landing({ onStart, onExample }: { onStart: () => void; onExample
             <div className="row"><i /></div>
           </div>
           <div className="sheet">
-            <small>Annex I-B</small>
+            <small>Annex VI</small>
             <b>Claim by legal heirs</b>
             <div className="row">I / We <i /></div>
             <div className="row">Religion <i /></div>
@@ -44,7 +44,7 @@ export function Landing({ onStart, onExample }: { onStart: () => void; onExample
             <div className="row"><i /></div>
           </div>
           <div className="sheet">
-            <small>Annex I-A</small>
+            <small>Annex V</small>
             <b>Application for Settlement of Claim</b>
             <div className="row">Bank <i>State Bank of India</i></div>
             <div className="row">Name of deceased <i>Ramesh Kumar Iyer</i></div>
@@ -69,7 +69,7 @@ export function Landing({ onStart, onExample }: { onStart: () => void; onExample
           </div>
           <div className="stat">
             <strong>5 forms</strong>
-            <span>the same for every bank since March 2026, filled here from one set of answers</span>
+            <span>the same for every bank since April 2026, filled here from one set of answers</span>
           </div>
           <div className="stat">
             <strong>0 bytes</strong>
@@ -101,12 +101,12 @@ export function Landing({ onStart, onExample }: { onStart: () => void; onExample
         <div className="split">
           <div className="quote">
             <blockquote>
-              “No succession certificate, letter of administration, probate or surety bond is required, irrespective of the amount” when the account
-              has a nominee.
+              “…the bank shall not insist on production of legal documents such as Succession Certificate, Letter of Administration, Probate of
+              Will, etc., or seek any bond of indemnity / surety … irrespective of the amount…”
             </blockquote>
             <cite>
-              What the Reserve Bank of India directed every bank to follow by 31 March 2026.{' '}
-              <a href={RBI_URL} target="_blank" rel="noreferrer">
+              Paragraph 286 of the Reserve Bank of India's Directions, on accounts with a nominee. In force from 1 April 2026.{' '}
+              <a href={TIMELINE.source.url} target="_blank" rel="noreferrer">
                 Read the Directions
               </a>
             </cite>
@@ -118,7 +118,12 @@ export function Landing({ onStart, onExample }: { onStart: () => void; onExample
               <li>
                 <div>
                   <b>Every rule shows its source</b>
-                  <span>Each route names the paragraph of the RBI Directions it comes from, with a link.</span>
+                  <span>
+                    Each route names the paragraph of the RBI Directions it comes from, with a link.{' '}
+                    <button className="link" style={{ padding: 0 }} onClick={onRulebook}>
+                      Read the whole rulebook
+                    </button>
+                  </span>
                 </div>
               </li>
               <li>
@@ -135,6 +140,23 @@ export function Landing({ onStart, onExample }: { onStart: () => void; onExample
               </li>
             </ul>
           </div>
+        </div>
+      </section>
+
+      <section className="wrap" style={{ paddingBottom: 56 }}>
+        <div className="also">
+          <div>
+            <span className="eyebrow">Same engine, another moment</span>
+            <h2 style={{ margin: '10px 0 8px', fontSize: 26 }}>Turning 18</h2>
+            <p>
+              Afterwards runs on a small open engine: questions, a rulebook where every rule carries its source, and official forms filled in the
+              browser. The same engine helps a young adult move childhood investments and accounts into their own name.
+            </p>
+          </div>
+          {/* ponytail: relative link, so it works wherever the two apps are deployed side by side; in dev run npm run dev:18 */}
+          <a className="btn ghost" href="turning-18/">
+            Open Turning 18
+          </a>
         </div>
       </section>
 

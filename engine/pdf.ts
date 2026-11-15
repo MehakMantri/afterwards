@@ -14,9 +14,11 @@ export type Mark = {
   w?: number
   size?: number
   wrap?: number // allow this many lines inside a table cell
+  pitch?: number // one character per printed box, the boxes this far apart
 }
 
-export type FormDef = { id: string; title: string; firstPage: number; lastPage: number; marks: Mark[] }
+// `template` is the path of the official PDF this form is cut from; several forms may share one file.
+export type FormDef = { id: string; title: string; template: string; firstPage: number; lastPage: number; marks: Mark[] }
 
 export function lookup(data: unknown, path: string): unknown {
   return path.split('.').reduce<unknown>((o, k) => (o == null ? undefined : (o as Record<string, unknown>)[k]), data)
@@ -35,8 +37,20 @@ export function render(template: string, data: unknown): string {
 }
 
 // The standard PDF fonts only cover Latin-1.
-// ponytail: other scripts are dropped; embed a Unicode font if forms must carry Hindi.
-const latin = (s: string) => s.replace(/₹/g, 'Rs. ').replace(/[^\x20-\x7e\xa0-\xff]/g, '')
+// ponytail: other scripts are dropped from the PDF; the UI warns first (see nonLatin). Embed a Unicode font if forms must carry Hindi.
+const TYPOGRAPHY: Record<string, string> = { '₹': 'Rs. ', '–': '-', '—': '-', '‘': "'", '’': "'", '“': '"', '”': '"', '…': '...' }
+const plain = (s: string) => s.replace(/[₹–—‘’“”…]/g, (c) => TYPOGRAPHY[c])
+const latin = (s: string) => plain(s).replace(/[^\x20-\x7e\xa0-\xff]/g, '')
+
+// True when text holds characters the printed form would lose.
+export const nonLatin = (s: string) => /[^\x09-\x7e\xa0-\xff]/.test(plain(s))
+
+// Dotted paths of every string in `data` that would lose characters in print.
+export function unprintable(data: unknown, path = ''): string[] {
+  if (typeof data === 'string') return nonLatin(data) ? [path] : []
+  if (data && typeof data === 'object') return Object.entries(data).flatMap(([k, v]) => unprintable(v, path ? `${path}.${k}` : k))
+  return []
+}
 
 function fit(font: PDFFont, text: string, size: number, w?: number) {
   if (!w) return size
@@ -85,6 +99,10 @@ export async function fillForm(template: ArrayBuffer | Uint8Array, form: FormDef
       const text = latin(render(m.text, data))
       if (!text) continue
       const size = m.size ?? 9.5
+      if (m.pitch) {
+        ;[...text.replace(/\s/g, '')].forEach((ch, i) => page.drawText(ch, { x: m.x + i * m.pitch! - font.widthOfTextAtSize(ch, size) / 2, y: m.y, size, font, color: INK }))
+        continue
+      }
       const rows = m.w && m.wrap && font.widthOfTextAtSize(text, size) > m.w ? wrapText(font, text, Math.min(size, 6.5), m.w, m.wrap) : [text]
       if (rows.length === 1) {
         page.drawText(text, { x: m.x, y: m.y, size: fit(font, text, size, m.w), font, color: INK })
@@ -133,4 +151,15 @@ export async function letter(title: string, paragraphs: string[]): Promise<Uint8
   })
   doc.setTitle(title)
   return doc.save()
+}
+
+// Several PDFs, one after another, as a single file.
+export async function merge(files: Uint8Array[], title: string): Promise<Uint8Array> {
+  const out = await PDFDocument.create()
+  for (const f of files) {
+    const src = await PDFDocument.load(f)
+    for (const p of await out.copyPages(src, src.getPageIndices())) out.addPage(p)
+  }
+  out.setTitle(title)
+  return out.save()
 }

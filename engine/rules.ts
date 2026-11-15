@@ -11,7 +11,8 @@ export type Rule = {
   forms: string[]
   documents: string[]
   lawyer?: string
-  source: { title: string; para: string; url: string; date: string }
+  // date: when the source was issued or last updated. checked: when someone last read it against this rule.
+  source: { title: string; para: string; url: string; date: string; checked: string }
 }
 
 export type Facts = Record<string, string | number | boolean | undefined>

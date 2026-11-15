@@ -2,11 +2,16 @@
   "name": "afterwards-monorepo",
   "private": true,
   "license": "MIT",
-  "workspaces": ["engine", "apps/*"],
+  "workspaces": [
+    "engine",
+    "apps/*"
+  ],
   "scripts": {
     "dev": "npm run dev -w afterwards",
-    "build": "npm run build -w afterwards",
-    "test": "vitest run"
+    "dev:18": "npm run dev -w turning-18",
+    "build": "npm run build -w afterwards && npm run build -w turning-18",
+    "test": "vitest run",
+    "samples": "vitest run --config scripts/vitest.samples.config.mts"
   },
   "devDependencies": {
     "fast-check": "^4.0.0",

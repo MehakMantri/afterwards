@@ -1,6 +1,6 @@
 ---
 inclusion: fileMatch
-fileMatchPattern: "**/rulebook/**"
+fileMatchPattern: "**/rulebook*.ts"
 ---
 
 # Editing a rulebook
@@ -11,3 +11,6 @@ fileMatchPattern: "**/rulebook/**"
 - Every combination of answers must reach exactly one route or "needs a lawyer".
 - Banks differ. A bank-specific row overrides the generic RBI row; never edit
   the generic row to fit one bank.
+- Every source carries two dates: `date` (issued or last updated) and `checked` (when a person last
+  read it against the rule). Change `checked` only after actually reading the source.
+- If no official text can be read for a situation, write no rule for it. Say so on the rulebook page.

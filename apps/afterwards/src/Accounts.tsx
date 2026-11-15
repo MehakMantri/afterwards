@@ -1,11 +1,11 @@
-import { inr } from '@afterwards/engine'
+import { Cell, Choice, Head, RuleCard, Text, YESNO, inr } from '@afterwards/engine'
+import { formName } from './data/forms'
 import { answered, newAccount, newClaim, route, total, type Case, type Claim } from './data/model'
 import { THRESHOLD } from './data/rulebook'
-import { Cell, Choice, Head, Text, YESNO } from './ui'
 
-type Props = { data: Case; set: (c: Case) => void }
+type Props = { data: Case; set: (c: Case) => void; onRulebook: () => void }
 
-export function RouteBox({ claim }: { claim: Claim }) {
+export function RouteBox({ claim, onRulebook }: { claim: Claim; onRulebook?: () => void }) {
   if (!answered(claim))
     return (
       <div className="route idle" aria-live="polite">
@@ -13,33 +13,10 @@ export function RouteBox({ claim }: { claim: Claim }) {
       </div>
     )
   const r = route(claim)
-  const tone = r.id === 'dispute' ? 'stop' : r.lawyer ? 'warn' : ''
-  return (
-    <div className={`route ${tone}`} aria-live="polite">
-      <div className="route-top">
-        <h4>{r.title}</h4>
-        <div className="chips">
-          {r.forms.map((f) => (
-            <span className="chip" key={f}>
-              Annex {f}
-            </span>
-          ))}
-        </div>
-      </div>
-      <p>{r.explain}</p>
-      {r.lawyer && <p className="lawyer">{r.lawyer}</p>}
-      <p className="src">
-        Source: {r.source.para},{' '}
-        <a href={r.source.url} target="_blank" rel="noreferrer">
-          {r.source.title}
-        </a>
-        .
-      </p>
-    </div>
-  )
+  return <RuleCard rule={r} formName={formName} tone={r.id === 'dispute' ? 'stop' : undefined} onRulebook={onRulebook} />
 }
 
-export function Accounts({ data, set }: Props) {
+export function Accounts({ data, set, onRulebook }: Props) {
   const update = (id: string, patch: Partial<Claim>) => set({ ...data, claims: data.claims.map((c) => (c.id === id ? { ...c, ...patch } : c)) })
 
   return (
@@ -74,14 +51,14 @@ export function Accounts({ data, set }: Props) {
                 { v: 'bank', l: 'A regular bank' },
                 { v: 'coop', l: 'A co-operative bank' },
               ]}
-              hint={`The limit for claims without a nominee is ${inr(THRESHOLD.bank)} at regular banks and ${inr(THRESHOLD.coop)} at co-operative banks.`}
+              hint={`The limit for claims without a nominee is ${inr(THRESHOLD.bank)} (15 lakh) at regular banks and ${inr(THRESHOLD.coop)} (5 lakh) at co-operative banks, which are smaller, member-owned banks.`}
             />
             <Choice
               label="Is there a nominee, or is it a joint account that passes to the survivor?"
               value={c.nominee}
               onChange={(nominee) => update(c.id, { nominee })}
               options={YESNO}
-              hint="The passbook, the account opening form or the branch can tell you."
+              hint="A nominee is the person the account holder named to receive the money. The passbook, the account opening form or the branch can tell you."
             />
             {c.nominee === 'no' && (
               <Choice label="Did they leave a Will?" value={c.will} onChange={(will) => update(c.id, { will })} options={YESNO} />
@@ -133,7 +110,7 @@ export function Accounts({ data, set }: Props) {
             )}
           </div>
 
-          <RouteBox claim={c} />
+          <RouteBox claim={c} onRulebook={onRulebook} />
         </section>
       ))}
 

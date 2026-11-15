@@ -227,3 +227,12 @@ input:focus-visible, select:focus-visible { outline: 0; border-color: var(--indi
 @media print {
   .bar, .stepper, .nav { display: none; }
 }
+
+/* ---------- rulebook page, packet row ---------- */
+.plain { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.card .lawyer { margin-top: 10px; font-weight: 600; }
+.card .chips { margin-top: 2px; }
+.doc.all { background: var(--leaf-wash); border-color: var(--leaf); }
+small.err { color: var(--rose); margin-top: 0; }
+.also { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 26px; box-shadow: var(--shadow); }
+.also p { color: var(--ink-soft); max-width: 44em; }

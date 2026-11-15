@@ -1,5 +1,5 @@
 import { answered, formsFor, newClaimant, type Case, type Claimant } from './data/model'
-import { Cell, Choice, Head, Text } from './ui'
+import { Cell, Choice, Head, Text } from '@afterwards/engine'
 
 type Props = { data: Case; set: (c: Case) => void }
 
@@ -10,8 +10,8 @@ export function People({ data, set }: Props) {
 
   // Only ask for what the chosen routes actually need.
   const needed = new Set(data.claims.filter(answered).flatMap((c) => formsFor({ ...data, heirs: [{ name: 'x', relation: '', age: '' }] }, c)))
-  const heirRoute = needed.has('I-B')
-  const needsDeclarant = needed.has('I-E')
+  const heirRoute = needed.has('VI')
+  const needsDeclarant = needed.has('IX')
 
   return (
     <>
@@ -92,7 +92,7 @@ export function People({ data, set }: Props) {
           <span className="num">Other legal heirs</span>
           <h2>Heirs who are not claiming</h2>
           <p className="sub" style={{ marginBottom: 18 }}>
-            Children, a spouse or parents who agree to let the claimants receive the money. Each signs the no-objection letter (Annex I-D).
+            Children, a spouse or parents who agree to let the claimants receive the money. Each signs the no-objection letter (Annex VIII).
           </p>
           <div className="table">
             {data.heirs.length > 0 && (
@@ -131,7 +131,7 @@ export function People({ data, set }: Props) {
           <h2>Someone who knows the family</h2>
           <p className="sub" style={{ marginBottom: 18 }}>
             A neighbour, a family friend or a colleague who is not an heir and gains nothing from the claim. They sign the declaration naming the
-            heirs (Annex I-E). The bank must find them acceptable.
+            heirs (Annex IX). The bank must find them acceptable.
           </p>
           <div className="grid">
             <Text label="Full name" value={data.declarant.name} onChange={(name) => set({ ...data, declarant: { ...data.declarant, name } })} />

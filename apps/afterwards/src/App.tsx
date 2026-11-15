@@ -1,91 +1,107 @@
-import { useEffect } from 'react'
-import { useStored } from '@afterwards/engine'
+import { Rulebook, Shell, inr, useStored } from '@afterwards/engine'
 import { Accounts } from './Accounts'
 import { Claims } from './Claims'
+import { EARLIER, formName } from './data/forms'
 import { emptyCase, exampleCase, type Case } from './data/model'
+import { RULEBOOK, THRESHOLD, TIMELINE, say } from './data/rulebook'
 import { Landing } from './Landing'
 import { People } from './People'
 import { Logo } from './ui'
 
-type View = 'home' | 'accounts' | 'people' | 'claims'
-const STEPS: { id: View; label: string }[] = [
-  { id: 'accounts', label: 'Accounts' },
-  { id: 'people', label: 'Details' },
-  { id: 'claims', label: 'Claims' },
-]
+const KEY = 'afterwards'
+
+function Rules() {
+  return (
+    <Rulebook
+      title="The whole rulebook."
+      intro={
+        <>
+          These are all the rules Afterwards knows, exactly as the app uses them. Each one names the paragraph of the Reserve Bank of India's
+          Directions it comes from, so you, a bank officer or a lawyer can check it. If a rule here is wrong, the app is wrong: tell us.
+        </>
+      }
+      rules={RULEBOOK}
+      say={say}
+      formName={formName}
+    >
+      <section className="card">
+        <span className="num">For every rule above</span>
+        <h2>The deadline, and what a late bank owes</h2>
+        <p style={{ marginTop: 12 }}>{TIMELINE.text}</p>
+        <p className="src">
+          Source: {TIMELINE.para},{' '}
+          <a href={TIMELINE.source.url} target="_blank" rel="noreferrer">
+            {TIMELINE.source.title}
+          </a>
+          .
+        </p>
+        <h3>The limit</h3>
+        <p>
+          {inr(THRESHOLD.bank)} (15 lakh) at regular banks and {inr(THRESHOLD.coop)} (5 lakh) at co-operative banks. A bank may set a higher limit
+          of its own, never a lower one.
+        </p>
+        <h3>The forms</h3>
+        <ul className="plain">
+          {Object.entries(EARLIER).map(([now, was]) => (
+            <li key={now}>
+              {formName(now)}, first issued as Annex {was}. Some branches still hand out prints with the earlier label; the form is the same.
+            </li>
+          ))}
+        </ul>
+        <h3>What these rules do not cover</h3>
+        <p>
+          Government savings schemes run through banks, such as the Public Provident Fund and the Senior Citizen Savings Scheme (paragraph 282).
+          Lockers, insurance, provident fund, shares and mutual funds. Co-operative banks follow the same rules under their own Directions; the
+          limit shown for them is cited from the Directions as first issued on 26 September 2025.
+        </p>
+        <h3>Words used here</h3>
+        <ul className="plain">
+          <li>
+            <b>Nominee:</b> the person the account holder named, at the bank, to receive the money.
+          </li>
+          <li>
+            <b>Legal heir:</b> a family member entitled to a share under the succession law that applies to the family.
+          </li>
+          <li>
+            <b>Succession certificate, probate, letter of administration:</b> papers issued by a court. They take months and need a lawyer.
+          </li>
+          <li>
+            <b>Bond of indemnity:</b> a signed promise to repay the bank if someone with a better claim appears later.
+          </li>
+          <li>
+            <b>Lakh:</b> one hundred thousand. 15 lakh rupees is 1,500,000 rupees.
+          </li>
+        </ul>
+      </section>
+    </Rulebook>
+  )
+}
 
 function App() {
-  const [data, setData] = useStored<Case>('afterwards.case.v1', emptyCase())
-  const [view, setView] = useStored<View>('afterwards.view.v1', 'home')
-  const at = STEPS.findIndex((s) => s.id === view)
-
-  // Braces matter: newer browsers return a Promise from scrollTo, and React would treat it as a cleanup function.
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [view])
-
-  const erase = () => {
-    if (window.confirm('Erase everything you have typed from this device? This cannot be undone.')) {
-      setData(emptyCase())
-      setView('home')
-    }
-  }
-
+  const [data, setData] = useStored<Case>(`${KEY}.case.v1`, emptyCase())
   return (
-    <>
-      <div className="wrap bar">
-        <button className="brand" onClick={() => setView('home')} aria-label="Afterwards, home">
-          <Logo />
-          Afterwards
-        </button>
-        <div className="bar-right">
-          <span className="pill">Stays on this device</span>
-          {view !== 'home' && (
-            <button className="link" onClick={erase}>
-              Erase my data
-            </button>
-          )}
-        </div>
-      </div>
-
-      {view === 'home' ? (
-        <main>
-          <Landing
-            onStart={() => setView('accounts')}
-            onExample={() => {
-              setData(exampleCase())
-              setView('claims')
-            }}
-          />
-        </main>
-      ) : (
-        <main className="narrow">
-          <nav className="stepper" aria-label="Steps">
-            {STEPS.map((s, i) => (
-              <button key={s.id} aria-current={s.id === view ? 'step' : undefined} onClick={() => setView(s.id)}>
-                <span>{i + 1}</span>
-                {s.label}
-              </button>
-            ))}
-          </nav>
-
-          {view === 'accounts' && <Accounts data={data} set={setData} />}
-          {view === 'people' && <People data={data} set={setData} />}
-          {view === 'claims' && <Claims data={data} set={setData} />}
-
-          <div className="nav">
-            <button className="btn ghost" onClick={() => setView(at > 0 ? STEPS[at - 1].id : 'home')}>
-              ← Back
-            </button>
-            {at < STEPS.length - 1 && (
-              <button className="btn" onClick={() => setView(STEPS[at + 1].id)}>
-                Continue →
-              </button>
-            )}
-          </div>
-        </main>
+    <Shell
+      storageKey={KEY}
+      name="Afterwards"
+      logo={<Logo />}
+      onErase={() => setData(emptyCase())}
+      home={(go) => (
+        <Landing
+          onStart={() => go('accounts')}
+          onRulebook={() => go('rules')}
+          onExample={() => {
+            setData(exampleCase())
+            go('claims')
+          }}
+        />
       )}
-    </>
+      pages={{ rules: { label: 'Rulebook', render: () => <Rules /> } }}
+      steps={[
+        { id: 'accounts', label: 'Accounts', render: (go) => <Accounts data={data} set={setData} onRulebook={() => go('rules')} /> },
+        { id: 'people', label: 'Details', render: () => <People data={data} set={setData} /> },
+        { id: 'claims', label: 'Claims', render: (go) => <Claims data={data} set={setData} onRulebook={() => go('rules')} /> },
+      ]}
+    />
   )
 }
 

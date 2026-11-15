@@ -1,6 +1,9 @@
 import type { FormDef, Mark } from '@afterwards/engine'
 
-// Field maps for the official RBI forms (Annex I-A to I-E of the 2025 Directions).
+// Field maps for the official RBI claim forms: Annex V to IX of the Responsible Business Conduct
+// Directions, first issued as Annex I-A to I-E in September 2025. The wording of the forms is the same.
+// ponytail: the template file is one bank's print, which still carries the earlier labels and that
+// bank's logo. Swap in the RBI's own five files and remap when they are in hand.
 // Coordinates are PDF points from the bottom-left of each page, read from the
 // text positions of the blanks in the official file. Page numbers are within the form.
 
@@ -27,8 +30,9 @@ const names = (page: number, ys: number[], x: number, list: string, w = 300): Ma
   ys.map((y, i) => t(page, x, y, `{${list}.${i}.name}`, w))
 
 const annexIA: FormDef = {
-  id: 'I-A',
-  title: 'Annex I-A: Claim form for nominee or survivor',
+  id: 'V',
+  template: TEMPLATE,
+  title: 'Annex V: Claim form for nominee or survivor',
   firstPage: 1,
   lastPage: 4,
   marks: [
@@ -65,8 +69,9 @@ const annexIA: FormDef = {
 }
 
 const annexIB: FormDef = {
-  id: 'I-B',
-  title: 'Annex I-B: Claim form for legal heirs',
+  id: 'VI',
+  template: TEMPLATE,
+  title: 'Annex VI: Claim form for legal heirs',
   firstPage: 5,
   lastPage: 10,
   marks: [
@@ -118,8 +123,9 @@ const annexIB: FormDef = {
 }
 
 const annexIC: FormDef = {
-  id: 'I-C',
-  title: 'Annex I-C: Bond of indemnity',
+  id: 'VII',
+  template: TEMPLATE,
+  title: 'Annex VII: Bond of indemnity',
   firstPage: 11,
   lastPage: 13,
   marks: [
@@ -135,8 +141,9 @@ const annexIC: FormDef = {
 }
 
 const annexID: FormDef = {
-  id: 'I-D',
-  title: 'Annex I-D: Letter of disclaimer / no objection',
+  id: 'VIII',
+  template: TEMPLATE,
+  title: 'Annex VIII: Letter of disclaimer / no objection',
   firstPage: 14,
   lastPage: 15,
   marks: [
@@ -155,8 +162,9 @@ const annexID: FormDef = {
 }
 
 const annexIE: FormDef = {
-  id: 'I-E',
-  title: 'Annex I-E: Declaration by an independent person',
+  id: 'IX',
+  template: TEMPLATE,
+  title: 'Annex IX: Declaration by an independent person',
   firstPage: 16,
   lastPage: 17,
   marks: [
@@ -179,13 +187,17 @@ const annexIE: FormDef = {
   ],
 }
 
-export const FORMS: Record<string, FormDef> = { 'I-A': annexIA, 'I-B': annexIB, 'I-C': annexIC, 'I-D': annexID, 'I-E': annexIE }
+export const FORMS: Record<string, FormDef> = { V: annexIA, VI: annexIB, VII: annexIC, VIII: annexID, IX: annexIE }
+
+// The forms were first issued as Annex I-A to I-E; some branches still hand out prints with those labels.
+export const EARLIER: Record<string, string> = { V: 'I-A', VI: 'I-B', VII: 'I-C', VIII: 'I-D', IX: 'I-E' }
+export const formName = (id: string) => `Annex ${id}`
 
 // One line each, for the people who have to sign them.
 export const FORM_NOTES: Record<string, string> = {
-  'I-A': 'Signed by the nominee or the surviving joint holder.',
-  'I-B': 'Signed by every heir who is claiming.',
-  'I-C': 'Signed by the claiming heirs, on stamp paper.',
-  'I-D': 'Signed by the heirs who are not claiming, on stamp paper.',
-  'I-E': 'Signed by someone who knows the family and is not an heir.',
+  V: 'Signed by the nominee or the surviving joint holder.',
+  VI: 'Signed by every heir who is claiming.',
+  VII: 'Signed by the claiming heirs, on stamp paper.',
+  VIII: 'Signed by the heirs who are not claiming, on stamp paper.',
+  IX: 'Signed by someone who knows the family and is not an heir.',
 }

@@ -1,5 +1,5 @@
-import { dmy, evaluate, inr, rupeesInWords, type Facts, type Rule } from '@afterwards/engine'
-import { RULEBOOK } from './rulebook'
+import { deadline, dmy, evaluate, inr, rupeesInWords, today, type Facts, type Rule } from '@afterwards/engine'
+import { RULEBOOK, TIMELINE } from './rulebook'
 
 export type YesNo = '' | 'yes' | 'no'
 export type Status = 'todo' | 'submitted' | 'query' | 'paid'
@@ -134,9 +134,16 @@ export function facts(c: Claim): Facts {
 
 export const route = (c: Claim): Rule => evaluate(RULEBOOK, facts(c))!
 
-// Which forms this claim actually needs. Annex I-D only matters when some heirs are not claiming.
+// The clock runs only while the bank holds every document and has not paid.
+// "Bank asked for more" stops it: the 15 days count from the day the last document goes in.
+export const clockRuns = (c: Claim) => c.status === 'submitted' && c.submittedOn !== ''
+
+// The letter about delay is offered only once the deadline has passed on a running clock.
+export const overdue = (c: Claim, now = today()) => clockRuns(c) && deadline(c.submittedOn, TIMELINE.days, now).late
+
+// Which forms this claim actually needs. Annex VIII only matters when some heirs are not claiming.
 export function formsFor(c: Case, claim: Claim): string[] {
-  return route(claim).forms.filter((f) => f !== 'I-D' || c.heirs.some((h) => h.name.trim()))
+  return route(claim).forms.filter((f) => f !== 'VIII' || c.heirs.some((h) => h.name.trim()))
 }
 
 // The flat object the field maps read from.
@@ -161,6 +168,6 @@ export function pdfData(c: Case, claim: Claim) {
       ...heirs.map((h) => ({ ...h, address: '', mobile: '', email: '', disclaimer: 'Yes' })),
     ],
     declarant: c.declarant,
-    flags: { always: true, noWill: claim.will === 'no', hasWill: claim.will === 'yes', hasHeirs: heirs.length > 0, declaration: rule.forms.includes('I-E') },
+    flags: { always: true, noWill: claim.will === 'no', hasWill: claim.will === 'yes', hasHeirs: heirs.length > 0, declaration: rule.forms.includes('IX') },
   }
 }
